@@ -46,16 +46,20 @@ function createWorker(env) {
       { $set: { status: "sending", claimedAt: now, processingBy: WORKER_ID } },
       { sort: { createdAt: 1 }, new: true },
     );
-    if (claimed) info(`⚙️ Worker ${WORKER_ID}: claimed ${claimed._id}`);
+
+    if (claimed) info(`Worker ${WORKER_ID}: claimed ${claimed._id}`);
     return claimed;
   }
 
   async function processClaimed(claimed) {
     emitEmailEvent(claimed._id.toString(), "sending");
+
     try {
       const valid = await validateEmailDomain(claimed.to);
+
       if (!valid) {
         const msg = "Domain not found or has no MX records";
+
         const r = await Email.updateOne(
           { _id: claimed._id, status: "sending", processingBy: WORKER_ID },
           {
@@ -64,6 +68,7 @@ function createWorker(env) {
             $unset: { processingBy: 1, claimedAt: 1 },
           },
         );
+
         if (r.modifiedCount === 0) {
           await Email.updateOne(
             { _id: claimed._id, status: "sending" },
@@ -74,13 +79,13 @@ function createWorker(env) {
             },
           );
         }
+
         emitEmailEvent(claimed._id.toString(), {
           status: "failed",
           error: msg,
         });
-        error(
-          `❌ Worker ${WORKER_ID}: invalid domain for ${claimed.to} → ${msg}`,
-        );
+
+        error(`Worker ${WORKER_ID}: invalid domain for ${claimed.to} → ${msg}`);
         return;
       }
 
@@ -99,9 +104,10 @@ function createWorker(env) {
           maxConnections: 5,
           maxMessages: 100,
         };
+
         sender = env.SMTP_RELAY_USER;
         cacheKey = `system_${env.SMTP_RELAY_USER}`;
-        info(`📤 Worker ${WORKER_ID}: SYSTEM SMTP → ${claimed.to}`);
+        info(`Worker ${WORKER_ID}: SYSTEM SMTP → ${claimed.to}`);
       } else {
         const apiKey = await ApiKey.findOne({ user: claimed.user });
         if (!apiKey || !apiKey.user)
@@ -129,7 +135,7 @@ function createWorker(env) {
 
         sender = cred.appUserEmail;
         cacheKey = `user_${cred.appUserEmail}`;
-        info(`📧 Worker ${WORKER_ID}: USER SMTP → ${claimed.to}`);
+        info(`Worker ${WORKER_ID}: USER SMTP → ${claimed.to}`);
       }
 
       const transporter = getTransporter(cfg, cacheKey);
@@ -142,8 +148,6 @@ function createWorker(env) {
         html: claimed.html,
       });
 
-      console.log(claimed);
-
       const r = await Email.updateOne(
         { _id: claimed._id, status: "sending", processingBy: WORKER_ID },
         {
@@ -152,6 +156,7 @@ function createWorker(env) {
           $unset: { processingBy: 1, claimedAt: 1 },
         },
       );
+
       if (r.modifiedCount === 0) {
         await Email.updateOne(
           { _id: claimed._id, status: "sending" },
@@ -164,7 +169,7 @@ function createWorker(env) {
       }
 
       emitEmailEvent(claimed._id.toString(), "sent");
-      info(`✅ Worker ${WORKER_ID}: sent ${claimed._id}`);
+      info(`Worker ${WORKER_ID}: sent ${claimed._id}`);
     } catch (e) {
       const msg = e?.message || "Unknown email send error";
       const delay = Math.min(
@@ -200,14 +205,19 @@ function createWorker(env) {
         );
       }
 
-      emitEmailEvent(claimed._id.toString(), { status: "failed", error: msg });
-      error(`❌ Worker ${WORKER_ID}: fail ${claimed._id} → ${msg}`);
+      emitEmailEvent(claimed._id.toString(), {
+        status: "failed",
+        error: msg,
+      });
+
+      error(`Worker ${WORKER_ID}: fail ${claimed._id} → ${msg}`);
     }
   }
 
   async function tick({ limit } = {}) {
     const take = Number(limit || BATCH_SIZE);
     const claimedBatch = [];
+
     for (let i = 0; i < take; i++) {
       const c = await claimNext();
       if (!c) break;
@@ -215,11 +225,11 @@ function createWorker(env) {
     }
 
     if (!claimedBatch.length) {
-      info(`⚙️ Worker ${WORKER_ID}: found 0 pending emails.`);
+      info(`Worker ${WORKER_ID}: found 0 pending emails.`);
       return { processed: 0 };
     }
 
-    info(`⚙️ Worker ${WORKER_ID}: processing ${claimedBatch.length} emails.`);
+    info(`Worker ${WORKER_ID}: processing ${claimedBatch.length} emails.`);
 
     const chunks = [];
     for (let i = 0; i < claimedBatch.length; i += MAX_PARALLEL)
@@ -233,7 +243,7 @@ function createWorker(env) {
 
   function logCacheSize() {
     info(
-      `🧹 Worker ${WORKER_ID}: transporter cache size ${transporterCache.size}`,
+      `Worker ${WORKER_ID}: transporter cache size ${transporterCache.size}`,
     );
   }
 
