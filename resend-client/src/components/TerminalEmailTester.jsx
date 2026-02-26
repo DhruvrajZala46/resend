@@ -9,7 +9,7 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
   const logsEndRef = useRef(null);
   const terminalRef = useRef(null);
 
-  const API_URL = "https://smtp-service-server.vercel.app";
+  const API_URL = import.meta.env.VITE_SMTP_SERVER_API_BASE_URL;
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
