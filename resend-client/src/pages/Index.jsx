@@ -56,6 +56,8 @@ const Index = () => {
     border,
   };
 
+  const API_URL = import.meta.env.VITE_SMTP_SERVER_API_BASE_URL;
+
   useEffect(() => {
     const duration = 2000;
     const steps = 60;
@@ -270,7 +272,7 @@ const Index = () => {
 
                 <pre className="overflow-x-auto text-xs md:text-sm">
                   <code>{`curl -X POST \\
-  https://smtp-service-server.vercel.app/api/email/send \\
+  ${API_URL}/api/email/send \\
   -H 'x-api-key: YOUR_KEY' \\
   -H 'Content-Type: application/json' \\
   -d '{
@@ -373,7 +375,7 @@ const Index = () => {
               className="text-base md:text-lg lg:text-xl max-w-2xl mx-auto"
               style={{ color: mutedForeground.color }}
             >
-              From startups to enterprises, SMTP-LITE handles all your
+              From startups to enterprises, RESEND handles all your
               transactional email needs.
             </p>
           </div>

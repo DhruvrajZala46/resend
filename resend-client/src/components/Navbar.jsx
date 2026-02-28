@@ -164,7 +164,7 @@ const Navbar = () => {
               className="text-2xl font-bold tracking-tight logo-title"
               style={{ color: legacy.primary.color }}
             >
-              SMTP-LITE
+              RESEND
             </span>
           </Link>
 

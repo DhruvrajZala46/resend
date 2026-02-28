@@ -781,3 +781,58 @@ export const createEmailTemplate = async (req, res) => {
     });
   }
 };
+
+export const getEmailTemplateByTemplateId = async (req, res) => {
+  try {
+    const { templateId } = req.body;
+
+    if (!templateId) {
+      return res.status(400).json({
+        message: "Template ID is required",
+      });
+    }
+
+    const template = await EmailTemplate.findOne({
+      templateId,
+      status: "active",
+    }).populate("owner", "_id name email profilePic");
+
+    if (!template) {
+      return res.status(404).json({
+        message: "Template not found",
+      });
+    }
+
+    // Extract variables like {{name}}, {{email}}, {{orderId}}
+    const variableRegex = /{{\s*([\w.]+)\s*}}/g;
+    const variablesSet = new Set();
+    let match;
+
+    while ((match = variableRegex.exec(template.html)) !== null) {
+      variablesSet.add(match[1]);
+    }
+
+    const variables = Array.from(variablesSet);
+
+    return res.status(200).json({
+      template: {
+        templateId: template.templateId,
+        subject: template.subject,
+        html: template.html,
+        type: template.type,
+        visibility: template.visibility,
+        status: template.status,
+        owner: template.owner,
+        createdAt: template.createdAt,
+        updatedAt: template.updatedAt,
+      },
+      variables,
+      totalVariables: variables.length,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Failed to fetch template",
+      error: err.message,
+    });
+  }
+};

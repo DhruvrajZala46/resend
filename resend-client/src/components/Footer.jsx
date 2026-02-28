@@ -23,7 +23,7 @@ const Footer = () => {
       <div className="max-w-4xl mx-auto px-4">
         <p className="mb-1">
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold">SMTP-LITE</span> — Built with{" "}
+          <span className="font-semibold">RESEND</span> — Built with{" "}
           <span className="text-red-500 animate-pulse">❤️</span> for developers
         </p>
 

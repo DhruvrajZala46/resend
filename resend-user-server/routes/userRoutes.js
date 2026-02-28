@@ -17,6 +17,7 @@ import {
   getPublicEmailTemplates,
   getMyEmailTemplates,
   createEmailTemplate,
+  getEmailTemplateByTemplateId,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/auth.js";
 
@@ -27,6 +28,7 @@ router.post("/verify/:token", verifyUser);
 router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.get("/email-templates/public", getPublicEmailTemplates);
+router.post("/get-variables", getEmailTemplateByTemplateId);
 
 // protected route
 router.use(protect);
