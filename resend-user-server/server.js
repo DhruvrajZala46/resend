@@ -31,6 +31,6 @@ app.use("/api/gemini", geminiRouter);
   await connectDB(process.env.MONGO_URI);
 
   app.listen(PORT, () => {
-    console.log(`🚀 API server listening on port ${PORT}`);
+    console.log(`API server listening on port ${PORT}`);
   });
 })();

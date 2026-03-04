@@ -2,54 +2,57 @@ import crypto from "crypto";
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 12;
-const APP_ENCRYPTION_KEY = "APP_ENCRYPTION_KEY";
+const AUTH_TAG_LENGTH = 16;
 
 function getKey() {
-  const keyBase64 = process.env[APP_ENCRYPTION_KEY];
-  if (!keyBase64) throw new Error(`${APP_ENCRYPTION_KEY} is not set`);
-  const key = Buffer.from(keyBase64, "base64");
-  if (key.length !== 32)
-    throw new Error(`${APP_ENCRYPTION_KEY} must be 32 bytes (base64-encoded)`);
-  return key;
+  const key = process.env.APP_ENCRYPTION_KEY;
+
+  if (!key) {
+    throw new Error("APP_ENCRYPTION_KEY is not set");
+  }
+
+  const bufferKey = Buffer.from(key, "base64");
+
+  if (bufferKey.length !== 32) {
+    throw new Error("APP_ENCRYPTION_KEY must be 32 bytes");
+  }
+
+  return bufferKey;
 }
 
-export function encrypt(plainText) {
+export function encrypt(text) {
   const key = getKey();
   const iv = crypto.randomBytes(IV_LENGTH);
-  const cipher = crypto.createCipheriv(ALGORITHM, key, iv, {
-    authTagLength: 16,
-  });
+
+  const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
 
   const encrypted = Buffer.concat([
-    cipher.update(String(plainText), "utf8"),
+    cipher.update(String(text), "utf8"),
     cipher.final(),
   ]);
-  const authTag = cipher.getAuthTag();
 
-  return [
-    iv.toString("base64"),
-    encrypted.toString("base64"),
-    authTag.toString("base64"),
-  ].join(":");
+  const tag = cipher.getAuthTag();
+
+  return `${iv.toString("base64")}:${encrypted.toString("base64")}:${tag.toString("base64")}`;
 }
 
-export function decrypt(encryptedPayload) {
+export function decrypt(payload) {
   const key = getKey();
-  const parts = encryptedPayload.split(":");
-  if (parts.length !== 3) throw new Error("Invalid encrypted payload format");
 
-  const iv = Buffer.from(parts[0], "base64");
-  const ciphertext = Buffer.from(parts[1], "base64");
-  const authTag = Buffer.from(parts[2], "base64");
+  const [iv, encrypted, tag] = payload.split(":");
 
-  const decipher = crypto.createDecipheriv(ALGORITHM, key, iv, {
-    authTagLength: 16,
-  });
-  decipher.setAuthTag(authTag);
+  const decipher = crypto.createDecipheriv(
+    ALGORITHM,
+    key,
+    Buffer.from(iv, "base64"),
+  );
+
+  decipher.setAuthTag(Buffer.from(tag, "base64"));
 
   const decrypted = Buffer.concat([
-    decipher.update(ciphertext),
+    decipher.update(Buffer.from(encrypted, "base64")),
     decipher.final(),
   ]);
+
   return decrypted.toString("utf8");
 }
