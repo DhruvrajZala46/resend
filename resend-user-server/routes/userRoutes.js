@@ -34,6 +34,7 @@ router.post("/get-variables", getEmailTemplateByTemplateId);
 router.use(protect);
 
 router.get("/me", getUserDetails);
+router.get("/dashboard", getUserDashboard);
 
 // api key routes
 router.post("/create-api-key", createApiKey);

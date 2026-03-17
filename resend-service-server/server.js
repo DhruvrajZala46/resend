@@ -18,7 +18,7 @@ app.use(
     origin: "*", // allow all domains
     methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "x-api-key", "Authorization"],
-  })
+  }),
 );
 
 app.use(express.json());

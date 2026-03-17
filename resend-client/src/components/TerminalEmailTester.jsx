@@ -3,12 +3,10 @@ import { Terminal, X, Play, Loader2, Trash2, Plus, Tag } from "lucide-react";
 import TerminalInput from "./TerminalInput";
 import { useEmailTemplate } from "../context/EmailTemplateContext";
 
-
 const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const isValidUUID = (str) => UUID_REGEX.test(str.trim());
-
 
 function useDebounce(value, delay) {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -19,9 +17,7 @@ function useDebounce(value, delay) {
   return debouncedValue;
 }
 
-
 const TerminalEmailTester = ({ onClose, themeColors }) => {
-
   const {
     templateInfo,
     templateVarKeys = [],
@@ -31,14 +27,11 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
     clearTemplateVariables,
   } = useEmailTemplate();
 
-
   const [logs, setLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showTester, setShowTester] = useState(false);
 
-
   const [templateId, setTemplateId] = useState("");
-
 
   const [variables, setVariables] = useState({});
   const [customVarName, setCustomVarName] = useState("");
@@ -50,14 +43,11 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
 
   const API_URL = import.meta.env.VITE_SMTP_SERVER_API_BASE_URL;
 
-
   const debouncedTemplateId = useDebounce(templateId, 400);
-
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
-
 
   useEffect(() => {
     setTimeout(() => setShowTester(true), 10);
@@ -81,19 +71,20 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
     getTemplateVariables(debouncedTemplateId.trim(), controller.signal).then(
       (res) => {
         if (res?.success) {
-          const vars = Array.isArray(res.data?.variables) ? res.data.variables : [];
+          const vars = Array.isArray(res.data?.variables)
+            ? res.data.variables
+            : [];
           const seedVars = {};
           vars.forEach((key) => {
             seedVars[key] = "";
           });
           setVariables(seedVars);
         }
-      }
+      },
     );
 
     return () => controller.abort();
   }, [debouncedTemplateId]);
-
 
   const addLog = useCallback((message, type = "info") => {
     const timestamp = new Date().toLocaleTimeString();
@@ -102,12 +93,10 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
 
   const clearLogs = () => setLogs([]);
 
-
   const handleClose = () => {
     setShowTester(false);
     setTimeout(onClose, 300);
   };
-
 
   const handleAutoVarChange = (key, value) => {
     setVariables((prev) => ({ ...prev, [key]: value }));
@@ -140,11 +129,9 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
     });
   };
 
-
   const customVarKeys = Object.keys(variables).filter(
-    (k) => !templateVarKeys.includes(k)
+    (k) => !templateVarKeys.includes(k),
   );
-
 
   const handleSend = async () => {
     const apiKey = document.getElementById("term-apikey")?.value || "";
@@ -152,18 +139,32 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
     const subject = document.getElementById("term-subject")?.value || "";
     const htmlBody = document.getElementById("term-html")?.value || "";
 
-    if (!apiKey.trim()) { addLog("ERROR: API Key is required", "error"); return; }
-    if (!toEmail.trim()) { addLog("ERROR: Recipient email is required", "error"); return; }
-    if (!subject.trim()) { addLog("ERROR: Subject is required", "error"); return; }
+    const hasTemplate = !!templateId.trim() && !!templateInfo;
+
+    if (!apiKey.trim()) {
+      addLog("ERROR: API Key is required", "error");
+      return;
+    }
+    if (!toEmail.trim()) {
+      addLog("ERROR: Recipient email is required", "error");
+      return;
+    }
+
+    // Subject is required only when not using a template
+    if (!hasTemplate && !subject.trim()) {
+      addLog("ERROR: Subject is required", "error");
+      return;
+    }
 
     setIsLoading(true);
     clearLogs();
 
     addLog("Initializing SMTP-LITE connection...", "info");
     addLog(`Target: ${toEmail}`, "info");
-    addLog(`Subject: ${subject}`, "info");
 
-    const hasTemplate = !!templateId.trim() && !!templateInfo;
+    if (!hasTemplate) {
+      addLog(`Subject: ${subject}`, "info");
+    }
 
     if (hasTemplate) {
       addLog(`Using Template ID: ${templateId.trim()}`, "info");
@@ -178,9 +179,9 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
       const bodyPayload = hasTemplate
         ? {
             to: toEmail,
-            subject,
             templateId: templateId.trim(),
             variables,
+            ...(subject.trim() ? { subject } : {}),
           }
         : {
             to: toEmail,
@@ -189,7 +190,7 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
               htmlBody.trim() ||
               `<div style="font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5;">
                 <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px;">
-                  <h2 style="color: #2563eb;">🎉 Test Email from SMTP-LITE</h2>
+                  <h2 style="color: #2563eb;">🎉 Test Email from RESEND</h2>
                   <p>This is a test email to verify your API integration.</p>
                   <p style="color: #64748b; font-size: 14px;">Sent at: ${new Date().toLocaleString()}</p>
                 </div>
@@ -231,7 +232,6 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
       setIsLoading(false);
     }
   };
-
 
   const listenForUpdates = async (emailId) => {
     addLog("Listening for delivery events...", "info");
@@ -320,27 +320,35 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
     }
   };
 
-
   const getLogColor = (type) => {
     switch (type) {
-      case "success": return "#10b981";
-      case "error":   return "#ef4444";
-      case "warning": return "#f59e0b";
-      case "loading": return "#3b82f6";
-      default:        return themeColors.mutedForeground.color;
+      case "success":
+        return "#10b981";
+      case "error":
+        return "#ef4444";
+      case "warning":
+        return "#f59e0b";
+      case "loading":
+        return "#3b82f6";
+      default:
+        return themeColors.mutedForeground.color;
     }
   };
 
   const getLogPrefix = (type) => {
     switch (type) {
-      case "success": return "✓";
-      case "error":   return "✗";
-      case "warning": return "⚠";
-      case "loading": return "⟳";
-      default:        return "→";
+      case "success":
+        return "✓";
+      case "error":
+        return "✗";
+      case "warning":
+        return "⚠";
+      case "loading":
+        return "⟳";
+      default:
+        return "→";
     }
   };
-
 
   const terminalInputStyle = {
     flex: 1,
@@ -377,7 +385,6 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
     textTransform: "uppercase",
   };
 
-
   return (
     <div
       style={{
@@ -410,7 +417,6 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
           transition: "transform 0.3s ease",
         }}
       >
-
         <div
           style={{
             backgroundColor: themeColors.background.color,
@@ -424,13 +430,42 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <div style={{ display: "flex", gap: "8px" }}>
               <div
-                style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#ef4444", cursor: "pointer" }}
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  borderRadius: "50%",
+                  backgroundColor: "#ef4444",
+                  cursor: "pointer",
+                }}
                 onClick={handleClose}
               />
-              <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#f59e0b" }} />
-              <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#10b981" }} />
+              <div
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  borderRadius: "50%",
+                  backgroundColor: "#f59e0b",
+                }}
+              />
+              <div
+                style={{
+                  width: "12px",
+                  height: "12px",
+                  borderRadius: "50%",
+                  backgroundColor: "#10b981",
+                }}
+              />
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", fontFamily: "monospace", fontSize: "13px", color: themeColors.foreground.color }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                fontFamily: "monospace",
+                fontSize: "13px",
+                color: themeColors.foreground.color,
+              }}
+            >
               <Terminal size={16} />
               <span>RESEND-tester</span>
             </div>
@@ -438,12 +473,17 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
 
           <button
             onClick={handleClose}
-            style={{ background: "none", border: "none", color: themeColors.mutedForeground.color, cursor: "pointer", padding: "4px" }}
+            style={{
+              background: "none",
+              border: "none",
+              color: themeColors.mutedForeground.color,
+              cursor: "pointer",
+              padding: "4px",
+            }}
           >
             <X size={20} />
           </button>
         </div>
-
 
         <div
           style={{
@@ -457,9 +497,7 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
             flexDirection: "column",
           }}
         >
-
           <div style={{ marginBottom: "4px" }}>
-
             <TerminalInput
               label="API_KEY"
               type="password"
@@ -489,7 +527,6 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
               />
             )}
 
-
             {!templateInfo && (
               <TerminalInput
                 label="HTML_BODY"
@@ -500,7 +537,6 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                 id="term-html"
               />
             )}
-
 
             <div style={{ marginBottom: "12px" }}>
               <div style={{ display: "flex", alignItems: "center" }}>
@@ -531,16 +567,30 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                 )}
               </div>
 
-
               {templateError && !isFetchingTemplate && (
-                <div style={{ marginLeft: "148px", marginTop: "4px", color: "#ef4444", fontSize: "11px" }}>
+                <div
+                  style={{
+                    marginLeft: "148px",
+                    marginTop: "4px",
+                    color: "#ef4444",
+                    fontSize: "11px",
+                  }}
+                >
                   ✗ {templateError}
                 </div>
               )}
 
-
               {templateInfo && !isFetchingTemplate && (
-                <div style={{ marginLeft: "148px", marginTop: "6px", display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    marginLeft: "148px",
+                    marginTop: "6px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    flexWrap: "wrap",
+                  }}
+                >
                   <span
                     style={{
                       display: "inline-flex",
@@ -556,10 +606,16 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                   >
                     <Tag size={10} />
                     {templateInfo.type || "template"} &nbsp;·&nbsp;{" "}
-                    {templateVarKeys.length} var{templateVarKeys.length !== 1 ? "s" : ""} detected
+                    {templateVarKeys.length} var
+                    {templateVarKeys.length !== 1 ? "s" : ""} detected
                   </span>
                   {templateInfo.owner?.name && (
-                    <span style={{ color: themeColors.mutedForeground.color, fontSize: "11px" }}>
+                    <span
+                      style={{
+                        color: themeColors.mutedForeground.color,
+                        fontSize: "11px",
+                      }}
+                    >
                       owner: {templateInfo.owner.name}
                     </span>
                   )}
@@ -568,9 +624,14 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
             </div>
           </div>
 
-
           {templateVarKeys.length > 0 && (
-            <div style={{ borderTop: `1px solid ${themeColors.border.color}`, paddingTop: "12px", marginBottom: "4px" }}>
+            <div
+              style={{
+                borderTop: `1px solid ${themeColors.border.color}`,
+                paddingTop: "12px",
+                marginBottom: "4px",
+              }}
+            >
               <div style={sectionDividerStyle}>
                 — Template Variables ({templateVarKeys.length}) —
               </div>
@@ -591,14 +652,25 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
             </div>
           )}
 
-
           {templateInfo && (
-            <div style={{ borderTop: `1px solid ${themeColors.border.color}`, paddingTop: "12px", marginBottom: "8px" }}>
+            <div
+              style={{
+                borderTop: `1px solid ${themeColors.border.color}`,
+                paddingTop: "12px",
+                marginBottom: "8px",
+              }}
+            >
               <div style={sectionDividerStyle}>— Custom Variables —</div>
 
-
               {customVarKeys.length > 0 && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "10px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "6px",
+                    marginBottom: "10px",
+                  }}
+                >
                   {customVarKeys.map((key) => (
                     <div
                       key={key}
@@ -615,9 +687,24 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                         color: themeColors.foreground.color,
                       }}
                     >
-                      <span style={{ color: themeColors.primary.color, fontWeight: 700 }}>{key}</span>
-                      <span style={{ color: themeColors.mutedForeground.color }}>:</span>
-                      <span>{variables[key] || <em style={{ opacity: 0.5 }}>empty</em>}</span>
+                      <span
+                        style={{
+                          color: themeColors.primary.color,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {key}
+                      </span>
+                      <span
+                        style={{ color: themeColors.mutedForeground.color }}
+                      >
+                        :
+                      </span>
+                      <span>
+                        {variables[key] || (
+                          <em style={{ opacity: 0.5 }}>empty</em>
+                        )}
+                      </span>
                       <button
                         onClick={() => handleRemoveCustomVar(key)}
                         disabled={isLoading}
@@ -640,15 +727,26 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                 </div>
               )}
 
-
-              <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                }}
+              >
                 <input
                   type="text"
                   placeholder="variable name"
                   value={customVarName}
-                  onChange={(e) => { setCustomVarName(e.target.value); setCustomVarError(""); }}
+                  onChange={(e) => {
+                    setCustomVarName(e.target.value);
+                    setCustomVarError("");
+                  }}
                   disabled={isLoading}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleAddCustomVar(); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleAddCustomVar();
+                  }}
                   style={{
                     ...terminalInputStyle,
                     flex: "0 0 180px",
@@ -667,7 +765,9 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                   value={customVarValue}
                   onChange={(e) => setCustomVarValue(e.target.value)}
                   disabled={isLoading}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleAddCustomVar(); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleAddCustomVar();
+                  }}
                   style={{
                     ...terminalInputStyle,
                     flex: "1 1 120px",
@@ -695,7 +795,10 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                     fontSize: "11px",
                     fontFamily: "monospace",
                     fontWeight: "600",
-                    cursor: isLoading || !customVarName.trim() ? "not-allowed" : "pointer",
+                    cursor:
+                      isLoading || !customVarName.trim()
+                        ? "not-allowed"
+                        : "pointer",
                     letterSpacing: "0.05em",
                   }}
                 >
@@ -705,21 +808,35 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
               </div>
 
               {customVarError && (
-                <div style={{ color: "#ef4444", fontSize: "11px", marginTop: "4px" }}>
+                <div
+                  style={{
+                    color: "#ef4444",
+                    fontSize: "11px",
+                    marginTop: "4px",
+                  }}
+                >
                   ✗ {customVarError}
                 </div>
               )}
             </div>
           )}
 
-
-          <div style={{ marginTop: "12px", marginBottom: "16px", display: "flex", gap: "12px" }}>
+          <div
+            style={{
+              marginTop: "12px",
+              marginBottom: "16px",
+              display: "flex",
+              gap: "12px",
+            }}
+          >
             <button
               onClick={handleSend}
               disabled={isLoading}
               style={{
                 padding: "8px 16px",
-                backgroundColor: isLoading ? themeColors.muted.color : themeColors.primary.color,
+                backgroundColor: isLoading
+                  ? themeColors.muted.color
+                  : themeColors.primary.color,
                 color: themeColors.primaryForeground.color,
                 border: "none",
                 borderRadius: "6px",
@@ -733,7 +850,11 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                 letterSpacing: "0.05em",
               }}
             >
-              {isLoading ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
+              {isLoading ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Play size={14} />
+              )}
               {isLoading ? "SENDING..." : "RUN TEST"}
             </button>
 
@@ -759,7 +880,6 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
             </button>
           </div>
 
-
           <div
             style={{
               flex: 1,
@@ -773,7 +893,13 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
             }}
           >
             {logs.length === 0 ? (
-              <div style={{ color: themeColors.mutedForeground.color, textAlign: "center", paddingTop: "40px" }}>
+              <div
+                style={{
+                  color: themeColors.mutedForeground.color,
+                  textAlign: "center",
+                  paddingTop: "40px",
+                }}
+              >
                 Waiting for commands...
               </div>
             ) : (
@@ -781,10 +907,19 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
                 {logs.map((log, index) => (
                   <div
                     key={index}
-                    style={{ marginBottom: "6px", display: "flex", gap: "12px", color: getLogColor(log.type) }}
+                    style={{
+                      marginBottom: "6px",
+                      display: "flex",
+                      gap: "12px",
+                      color: getLogColor(log.type),
+                    }}
                   >
-                    <span style={{ opacity: 0.5, minWidth: "70px" }}>[{log.timestamp}]</span>
-                    <span style={{ minWidth: "15px" }}>{getLogPrefix(log.type)}</span>
+                    <span style={{ opacity: 0.5, minWidth: "70px" }}>
+                      [{log.timestamp}]
+                    </span>
+                    <span style={{ minWidth: "15px" }}>
+                      {getLogPrefix(log.type)}
+                    </span>
                     <span style={{ flex: 1 }}>{log.message}</span>
                   </div>
                 ))}
