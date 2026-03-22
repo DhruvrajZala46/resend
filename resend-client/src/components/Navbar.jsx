@@ -158,10 +158,10 @@ const Navbar = () => {
             <img
               src={logo}
               alt="MailFlow Logo"
-              className="w-10 h-10 object-contain"
+              className="w-8 h-8 object-contain"
             />
             <span
-              className="text-2xl font-bold tracking-tight logo-title"
+              className="text-xl font-bold tracking-tight logo-title"
               style={{ color: legacy.primary.color }}
             >
               RESEND
@@ -215,7 +215,7 @@ const Navbar = () => {
                   key={link.name}
                   ref={(el) => (linkRefs.current[i] = el)}
                   to={link.href}
-                  className="relative z-10 px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg"
+                  className="relative z-10 px-3 py-1.5 text-sm font-medium transition-colors duration-200 rounded-lg"
                   style={{
                     color: isActive
                       ? legacy.primary.color
@@ -235,7 +235,7 @@ const Navbar = () => {
             <div className="relative" ref={themeMenuRef}>
               <button
                 onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
-                className="p-2 rounded-full transition-all duration-300"
+                className="p-1.5 rounded-full transition-all duration-300"
                 style={{
                   backgroundColor: legacy.secondary.color,
                   color: legacy.secondaryForeground.color,
@@ -311,14 +311,14 @@ const Navbar = () => {
             {location.pathname === "/documentations" && (
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-300"
                 style={{
                   backgroundColor: legacy.secondary.color,
                   color: legacy.secondaryForeground.color,
                   border: `1px solid ${legacy.border.color}`,
                 }}
               >
-                <Search size={18} />
+                <Search size={16} />
                 <span className="text-sm">Search</span>
                 <kbd
                   className="px-2 py-1 rounded text-xs"
@@ -338,37 +338,37 @@ const Navbar = () => {
                 <>
                   <Link
                     to="/login"
-                    className="flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300"
+                    className="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-all duration-300"
                     style={{
                       color: legacy.foreground.color,
                       border: `1px solid ${legacy.border.color}`,
                     }}
                   >
-                    <LogIn size={18} />
-                    <span>Login</span>
+                    <LogIn size={16} />
+                    <span className="text-sm">Login</span>
                   </Link>
                   <Link
                     to="/register"
-                    className="flex items-center space-x-2 px-4 py-2 rounded-lg"
+                    className="flex items-center space-x-2 px-3 py-1.5 rounded-lg"
                     style={{
                       backgroundColor: legacy.primary.color,
                       color: legacy.primaryForeground.color,
                     }}
                   >
-                    <UserPlus size={18} />
-                    <span>Register</span>
+                    <UserPlus size={16} />
+                    <span className="text-sm">Register</span>
                   </Link>
                 </>
               )}
             </div>
 
-            <div className="md:hidden mt-2">
+            <div className="md:hidden">
               <button
                 onClick={toggleMenu}
-                className="focus:outline-none"
+                className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus:outline-none"
                 style={{ color: legacy.foreground.color }}
               >
-                <Menu size={28} />
+                <Menu size={24} />
               </button>
             </div>
           </div>
@@ -379,124 +379,101 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden fixed top-0 left-0 h-full w-full z-40 overflow-y-auto"
+            initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            animate={{ opacity: 1, backdropFilter: "blur(12px)" }}
+            exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+            className="md:hidden fixed inset-0 z-40 overflow-y-auto"
             style={{
-              backgroundColor: legacy.background.color,
+              backgroundColor: `${legacy.background.color}E6`, // 90% opacity for glass effect
               color: legacy.foreground.color,
-              borderRight: `1px solid ${legacy.border.color}`,
             }}
           >
-            <div className="px-4 pt-4 pb-4 space-y-2">
+            <div className="px-3 pb-3 min-h-screen flex flex-col">
               {/* Header */}
-              <div className="flex justify-between items-center mb-4">
-                <Link
-                  to="/"
-                  className="flex items-center space-x-2"
-                  onClick={() => setIsOpen(false)}
+              <div className="flex justify-between items-center h-16 mb-2">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <img
-                    src={logo}
-                    alt="MailFlow Logo"
-                    className="w-8 h-8 object-contain"
-                  />
-                  <span
-                    className="text-2xl font-bold"
-                    style={{ color: legacy.primary.color }}
+                  <Link
+                    to="/"
+                    className="flex items-center space-x-2"
+                    onClick={() => setIsOpen(false)}
                   >
-                    SMTP-LITE
-                  </span>
-                </Link>
-                <button
+                    <img
+                      src={logo}
+                      alt="MailFlow Logo"
+                      className="w-8 h-8 object-contain"
+                    />
+                    <span
+                      className="text-xl font-bold tracking-tight logo-title"
+                      style={{ color: legacy.primary.color }}
+                    >
+                      RESEND
+                    </span>
+                  </Link>
+                </motion.div>
+                <motion.button
+                  initial={{ opacity: 0, rotate: -90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  transition={{ delay: 0.1, duration: 0.3 }}
                   onClick={toggleMenu}
                   style={{ color: legacy.foreground.color }}
+                  className="p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                 >
-                  <X size={26} />
-                </button>
+                  <X size={24} />
+                </motion.button>
               </div>
 
-              {/* Theme Toggle in Mobile */}
-              {/* <div
-                className="pb-4 mb-2 border-b"
-                style={{ borderColor: legacy.border.color }}
-              >
-                <div
-                  className="text-xs font-medium mb-2 px-3"
-                  style={{ color: legacy.mutedForeground.color }}
-                >
-                  Theme
-                </div>
-                <div className="space-y-1">
-                  {themeOptions.map((option) => {
-                    const Icon = option.icon;
-                    const isSelected = themeMode === option.value;
-                    return (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          setThemeMode(option.value);
-                        }}
-                        className="w-full flex items-center justify-between px-3 py-2 rounded-lg transition-colors duration-200"
+              {/* Links */}
+              <div className="flex-1 space-y-0.5 mt-2">
+                {navLinks.map((link, i) => {
+                  const Icon = link.icon;
+                  return (
+                    <motion.div
+                      key={link.name}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + i * 0.05, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                    >
+                      <Link
+                        to={link.href}
+                        onClick={() => setIsOpen(false)}
+                        className="flex items-center space-x-3 px-3 py-1.5 rounded-lg transition-all duration-300"
                         style={{
                           color: legacy.foreground.color,
-                          backgroundColor: isSelected
-                            ? legacy.secondary.color
-                            : "transparent",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = legacy.secondary.color;
+                          e.currentTarget.style.color = legacy.primary.color;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                          e.currentTarget.style.color = legacy.foreground.color;
                         }}
                       >
-                        <div className="flex items-center gap-3">
-                          <Icon size={18} />
-                          <span className="font-medium">{option.label}</span>
-                        </div>
-                        {isSelected && (
-                          <Check
-                            size={18}
-                            style={{ color: legacy.primary.color }}
-                          />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div> */}
-
-              {/* Links */}
-              {navLinks.map((link) => {
-                const Icon = link.icon;
-                return (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors duration-200"
-                    style={{
-                      color: legacy.foreground.color,
-                    }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.color = legacy.primary.color)
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = legacy.foreground.color)
-                    }
-                  >
-                    <Icon size={20} />
-                    <span className="font-medium">{link.name}</span>
-                  </Link>
-                );
-              })}
+                        <Icon size={20} className="opacity-80" />
+                        <span className="text-base font-medium tracking-wide">{link.name}</span>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </div>
 
               {/* Auth */}
-              <div
-                className="pt-4 border-t space-y-2"
-                style={{ borderColor: legacy.border.color }}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="mt-2 pt-2 space-y-2"
+                style={{ borderTop: `1px solid ${legacy.border.color}` }}
               >
                 {user ? (
                   <>
                     <div
-                      className="px-3 py-2 font-medium"
+                      className="px-3 py-1.5 font-medium text-sm opacity-80"
                       style={{ color: legacy.foreground.color }}
                     >
                       Hi, {user.name}
@@ -506,45 +483,46 @@ const Navbar = () => {
                         handleLogout();
                         setIsOpen(false);
                       }}
-                      className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg"
+                      className="w-full flex justify-center items-center space-x-2 px-3 py-2.5 rounded-lg shadow-sm transition-transform active:scale-95"
                       style={{
                         backgroundColor: legacy.primary.color,
                         color: legacy.primaryForeground.color,
                       }}
                     >
-                      <LogOut size={20} />
-                      <span className="font-medium">Logout</span>
+                      <LogOut size={18} />
+                      <span className="text-base font-semibold">Logout</span>
                     </button>
                   </>
                 ) : (
-                  <>
+                  <div className="flex flex-col space-y-2">
                     <Link
                       to="/login"
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-lg"
+                      className="flex justify-center items-center space-x-2 px-3 py-2 rounded-lg transition-all active:scale-95"
                       style={{
                         color: legacy.foreground.color,
                         border: `1px solid ${legacy.border.color}`,
+                        backgroundColor: legacy.background.color,
                       }}
                     >
                       <LogIn size={18} />
-                      <span>Login</span>
+                      <span className="text-base font-semibold">Login</span>
                     </Link>
                     <Link
                       to="/register"
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-lg"
+                      className="flex justify-center items-center space-x-2 px-3 py-2 rounded-lg shadow-sm transition-all active:scale-95"
                       style={{
                         backgroundColor: legacy.primary.color,
                         color: legacy.primaryForeground.color,
                       }}
                     >
                       <UserPlus size={18} />
-                      <span>Register</span>
+                      <span className="text-base font-semibold">Register</span>
                     </Link>
-                  </>
+                  </div>
                 )}
-              </div>
+              </motion.div>
             </div>
           </motion.div>
         )}

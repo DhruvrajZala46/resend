@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useApiKeys } from "../context/ApiKeyContext";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Copy,
   Trash2,
@@ -10,6 +10,7 @@ import {
   ToggleLeft,
   ToggleRight,
   AlertTriangle,
+  Plus,
 } from "lucide-react";
 import { useThemeStyles } from "../utils/useThemeStyles";
 
@@ -25,8 +26,8 @@ const ApiKeys = () => {
     primaryForeground,
     foreground,
     muted,
+    mutedForeground,
     input,
-    hover,
   } = useThemeStyles();
 
   const [name, setName] = useState("");
@@ -88,217 +89,266 @@ const ApiKeys = () => {
 
   return (
     <div
-      className="flex flex-col items-center justify-start pt-5 px-2 transition-colors duration-300"
-      style={{
-        backgroundColor: background.color,
-        color: foreground.color,
-      }}
+      className="min-h-screen pt-8 px-4 transition-colors duration-300"
+      style={{ backgroundColor: background.color, color: foreground.color }}
     >
-      <div className="w-full max-w-5xl">
-        <h1
-          className="text-3xl font-bold mb-6 flex items-center gap-2"
-          style={{ color: primary.color }}
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-8"
         >
-          <KeyRound size={28} />
-          Manage API Keys
-        </h1>
+          <div className="flex items-center gap-3 mb-2">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
+              style={{ backgroundColor: `${primary.color}18`, color: primary.color }}
+            >
+              <KeyRound size={20} />
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: foreground.color }}>
+              API Keys
+            </h1>
+          </div>
+          <p className="text-sm font-medium ml-1" style={{ color: mutedForeground.color }}>
+            Create and manage keys to authenticate against the Resend API.
+          </p>
+        </motion.div>
 
         {/* Alerts */}
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 flex items-start gap-3 p-4 rounded-lg"
-            style={{
-              backgroundColor: "rgba(239,68,68,0.1)",
-              borderLeft: "4px solid #ef4444",
-              color: "#b91c1c",
-            }}
-          >
-            <AlertTriangle size={20} className="mt-0.5" />
-            <div>
-              <p className="font-semibold">Error</p>
-              <p className="text-sm">{error}</p>
-            </div>
-          </motion.div>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.div
+              key="error"
+              initial={{ opacity: 0, y: -5, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-5 flex items-start gap-3 p-4 rounded-xl overflow-hidden"
+              style={{
+                backgroundColor: "rgba(239,68,68,0.08)",
+                borderLeft: "3px solid #ef4444",
+                color: "#b91c1c",
+              }}
+            >
+              <AlertTriangle size={18} className="mt-0.5 shrink-0" />
+              <div>
+                <p className="font-bold text-sm">Error</p>
+                <p className="text-sm opacity-80">{error}</p>
+              </div>
+            </motion.div>
+          )}
 
-        {success && (
-          <motion.div
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 flex items-start gap-3 p-4 rounded-lg"
-            style={{
-              backgroundColor: "rgba(34,197,94,0.1)",
-              borderLeft: "4px solid #16a34a",
-              color: "#166534",
-            }}
-          >
-            <Check size={20} className="mt-0.5" />
-            <div>
-              <p className="font-semibold">Success</p>
-              <p className="text-sm">{success}</p>
-            </div>
-          </motion.div>
-        )}
+          {success && (
+            <motion.div
+              key="success"
+              initial={{ opacity: 0, y: -5, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mb-5 flex items-start gap-3 p-4 rounded-xl overflow-hidden"
+              style={{
+                backgroundColor: "rgba(34,197,94,0.08)",
+                borderLeft: "3px solid #16a34a",
+                color: "#166534",
+              }}
+            >
+              <Check size={18} className="mt-0.5 shrink-0" />
+              <div>
+                <p className="font-bold text-sm">Success</p>
+                <p className="text-sm opacity-80">{success}</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Create New Key */}
-        <form
-          onSubmit={handleCreate}
-          className="flex flex-col sm:flex-row gap-4 mb-8"
+        {/* Create New Key Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="p-5 rounded-2xl mb-8 shadow-sm"
+          style={{ backgroundColor: card.color, border: `1px solid ${border.color}` }}
         >
-          <input
-            type="text"
-            placeholder="Enter API Key Name..."
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="flex-grow px-4 py-2 rounded-lg focus:outline-none transition-colors duration-200"
-            style={{
-              backgroundColor: card.color,
-              border: `1px solid ${input.color}`,
-              color: foreground.color,
-            }}
-          />
-          <button
-            type="submit"
-            disabled={creating}
-            className="rounded-lg font-medium px-6 py-2 flex items-center justify-center gap-2 transition-colors duration-300"
-            style={{
-              backgroundColor: primary.color,
-              color: primaryForeground.color,
-              opacity: creating ? 0.8 : 1,
-              cursor: creating ? "not-allowed" : "pointer",
-            }}
-          >
-            {creating ? (
-              <Loader2 className="animate-spin" size={20} />
-            ) : (
-              "Create"
-            )}
-          </button>
-        </form>
+          <h2 className="text-base font-bold mb-4" style={{ color: foreground.color }}>
+            Create a New Key
+          </h2>
+          <form onSubmit={handleCreate} className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              placeholder="e.g. Production Key, Dev Key..."
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="flex-grow px-4 py-3 rounded-xl outline-none transition-all duration-300 text-sm"
+              style={{
+                backgroundColor: background.color,
+                border: `1px solid ${border.color}`,
+                color: foreground.color,
+              }}
+              onFocus={(e) => (e.target.style.borderColor = primary.color)}
+              onBlur={(e) => (e.target.style.borderColor = border.color)}
+            />
+            <button
+              type="submit"
+              disabled={creating}
+              className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] shrink-0"
+              style={{
+                backgroundColor: primary.color,
+                color: primaryForeground.color,
+                opacity: creating ? 0.7 : 1,
+                cursor: creating ? "not-allowed" : "pointer",
+                boxShadow: `0 4px 14px ${primary.color}30`,
+              }}
+            >
+              {creating ? (
+                <Loader2 className="animate-spin" size={18} />
+              ) : (
+                <>
+                  <Plus size={16} />
+                  Generate Key
+                </>
+              )}
+            </button>
+          </form>
+        </motion.div>
 
         {/* API Keys List */}
-        {loading ? (
-          <div
-            className="text-center font-medium"
-            style={{ color: muted.color }}
-          >
-            Loading keys...
-          </div>
-        ) : apiKeys.length === 0 ? (
-          <div
-            className="text-center font-medium"
-            style={{ color: muted.color }}
-          >
-            No API keys created yet.
-          </div>
-        ) : (
-          <motion.div
-            layout
-            className="grid gap-4 sm:grid-cols-2 md:grid-cols-3"
-          >
-            {apiKeys.map((keyObj) => {
-              const isToggling = togglingIds.includes(keyObj._id);
-              const isDeleting = deletingIds.includes(keyObj._id);
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest mb-4 ml-1" style={{ color: mutedForeground.color }}>
+            Your Keys ({loading ? "..." : apiKeys.length})
+          </h2>
 
-              return (
-                <motion.div
-                  key={keyObj._id}
-                  layout
-                  className="p-4 rounded-xl shadow-md transition-all duration-300"
-                  style={{
-                    backgroundColor: card.color,
-                    color: foreground.color,
-                    border: `1px solid ${border.color}`,
-                  }}
-                >
-                  <div className="flex justify-between items-center mb-2">
-                    <h2 className="font-semibold">{keyObj.name}</h2>
-                    <span
-                      className="text-xs px-2 py-1 rounded-full font-medium"
-                      style={{
-                        backgroundColor: keyObj.active
-                          ? "rgba(34,197,94,0.15)"
-                          : "rgba(239,68,68,0.15)",
-                        color: keyObj.active ? "#16a34a" : "#ef4444",
-                      }}
-                    >
-                      {keyObj.active ? "Active" : "Inactive"}
-                    </span>
-                  </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-16 gap-3" style={{ color: mutedForeground.color }}>
+              <Loader2 size={20} className="animate-spin" />
+              <span className="text-sm font-medium">Loading keys...</span>
+            </div>
+          ) : apiKeys.length === 0 ? (
+            <div
+              className="flex flex-col items-center justify-center py-16 rounded-2xl border-2 border-dashed gap-3"
+              style={{ borderColor: border.color }}
+            >
+              <KeyRound size={36} style={{ color: mutedForeground.color, opacity: 0.4 }} />
+              <p className="text-sm font-medium" style={{ color: mutedForeground.color }}>
+                No API keys yet. Create your first key above.
+              </p>
+            </div>
+          ) : (
+            <motion.div layout className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {apiKeys.map((keyObj, index) => {
+                const isToggling = togglingIds.includes(keyObj._id);
+                const isDeleting = deletingIds.includes(keyObj._id);
 
-                  <div
-                    className="font-mono text-sm p-2 rounded break-all"
+                return (
+                  <motion.div
+                    key={keyObj._id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: index * 0.06 }}
+                    className="p-5 rounded-2xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md group"
                     style={{
-                      backgroundColor: muted.color,
+                      backgroundColor: card.color,
                       border: `1px solid ${border.color}`,
                     }}
                   >
-                    {keyObj.key.length > 20
-                      ? `${keyObj.key.slice(0, 20)}...`
-                      : keyObj.key}
-                  </div>
+                    {/* Header Row */}
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="font-bold text-base truncate pr-2" style={{ color: foreground.color }}>
+                        {keyObj.name}
+                      </h3>
+                      <span
+                        className="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shrink-0"
+                        style={{
+                          backgroundColor: keyObj.active
+                            ? "rgba(34,197,94,0.12)"
+                            : "rgba(239,68,68,0.12)",
+                          color: keyObj.active ? "#16a34a" : "#ef4444",
+                        }}
+                      >
+                        {keyObj.active ? "Active" : "Inactive"}
+                      </span>
+                    </div>
 
-                  <div className="flex justify-end gap-3 mt-3">
-                    {/* Toggle */}
-                    <motion.button
-                      onClick={() => handleToggle(keyObj._id)}
-                      disabled={isToggling}
-                      className="flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-medium transition"
-                      whileTap={{ scale: 0.9 }}
+                    {/* Key Preview */}
+                    <div
+                      className="font-mono text-xs p-3 rounded-xl mb-4 break-all leading-relaxed"
                       style={{
-                        backgroundColor: keyObj.active
-                          ? "rgba(34,197,94,1)"
-                          : "rgba(156,163,175,0.5)",
-                        color: keyObj.active ? "#fff" : "#111",
+                        backgroundColor: background.color,
+                        border: `1px solid ${border.color}`,
+                        color: mutedForeground.color,
                       }}
                     >
-                      {isToggling ? (
-                        <Loader2 className="animate-spin" size={16} />
-                      ) : keyObj.active ? (
-                        <>
-                          <ToggleRight size={16} /> Deactivate
-                        </>
-                      ) : (
-                        <>
-                          <ToggleLeft size={16} /> Activate
-                        </>
-                      )}
-                    </motion.button>
+                      {keyObj.key.length > 24
+                        ? `${keyObj.key.slice(0, 24)}...`
+                        : keyObj.key}
+                    </div>
 
-                    {/* Copy */}
-                    <button
-                      onClick={() => handleCopy(keyObj._id, keyObj.key)}
-                      className="transition"
-                      style={{ color: primary.color }}
-                    >
-                      {copiedKeyId === keyObj._id ? (
-                        <Check size={18} className="text-green-500" />
-                      ) : (
-                        <Copy size={18} />
-                      )}
-                    </button>
+                    {/* Action Row */}
+                    <div className="flex items-center gap-2">
+                      {/* Toggle */}
+                      <motion.button
+                        onClick={() => handleToggle(keyObj._id)}
+                        disabled={isToggling}
+                        whileTap={{ scale: 0.93 }}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold flex-1 justify-center transition-all duration-300"
+                        style={{
+                          backgroundColor: keyObj.active
+                            ? "rgba(34,197,94,0.12)"
+                            : "rgba(156,163,175,0.15)",
+                          color: keyObj.active ? "#16a34a" : mutedForeground.color,
+                          border: `1px solid ${keyObj.active ? "rgba(34,197,94,0.25)" : border.color}`,
+                        }}
+                      >
+                        {isToggling ? (
+                          <Loader2 className="animate-spin" size={14} />
+                        ) : keyObj.active ? (
+                          <><ToggleRight size={14} /> Deactivate</>
+                        ) : (
+                          <><ToggleLeft size={14} /> Activate</>
+                        )}
+                      </motion.button>
 
-                    {/* Delete */}
-                    <button
-                      onClick={() => handleDelete(keyObj._id)}
-                      disabled={isDeleting}
-                      className="transition"
-                      style={{ color: "#ef4444" }}
-                    >
-                      {isDeleting ? (
-                        <Loader2 className="animate-spin" size={18} />
-                      ) : (
-                        <Trash2 size={18} />
-                      )}
-                    </button>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
+                      {/* Copy */}
+                      <button
+                        onClick={() => handleCopy(keyObj._id, keyObj.key)}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                        style={{
+                          backgroundColor: `${primary.color}15`,
+                          color: primary.color,
+                        }}
+                        title="Copy Key"
+                      >
+                        {copiedKeyId === keyObj._id ? (
+                          <Check size={15} className="text-green-500" />
+                        ) : (
+                          <Copy size={15} />
+                        )}
+                      </button>
+
+                      {/* Delete */}
+                      <button
+                        onClick={() => handleDelete(keyObj._id)}
+                        disabled={isDeleting}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                        style={{
+                          backgroundColor: "rgba(239,68,68,0.1)",
+                          color: "#ef4444",
+                        }}
+                        title="Delete Key"
+                      >
+                        {isDeleting ? (
+                          <Loader2 className="animate-spin" size={15} />
+                        ) : (
+                          <Trash2 size={15} />
+                        )}
+                      </button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );
