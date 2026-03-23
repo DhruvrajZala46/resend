@@ -34,9 +34,6 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
   const [templateId, setTemplateId] = useState("");
 
   const [variables, setVariables] = useState({});
-  const [customVarName, setCustomVarName] = useState("");
-  const [customVarValue, setCustomVarValue] = useState("");
-  const [customVarError, setCustomVarError] = useState("");
 
   const logsEndRef = useRef(null);
   const terminalRef = useRef(null);
@@ -102,36 +99,6 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
     setVariables((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleAddCustomVar = () => {
-    const trimmedName = customVarName.trim();
-    const trimmedValue = customVarValue.trim();
-
-    if (!trimmedName) {
-      setCustomVarError("Variable name cannot be empty.");
-      return;
-    }
-    if (Object.prototype.hasOwnProperty.call(variables, trimmedName)) {
-      setCustomVarError(`"${trimmedName}" already exists.`);
-      return;
-    }
-
-    setVariables((prev) => ({ ...prev, [trimmedName]: trimmedValue }));
-    setCustomVarName("");
-    setCustomVarValue("");
-    setCustomVarError("");
-  };
-
-  const handleRemoveCustomVar = (key) => {
-    setVariables((prev) => {
-      const next = { ...prev };
-      delete next[key];
-      return next;
-    });
-  };
-
-  const customVarKeys = Object.keys(variables).filter(
-    (k) => !templateVarKeys.includes(k),
-  );
 
   const handleSend = async () => {
     const apiKey = document.getElementById("term-apikey")?.value || "";
@@ -652,174 +619,7 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
             </div>
           )}
 
-          {templateInfo && (
-            <div
-              style={{
-                borderTop: `1px solid ${themeColors.border.color}`,
-                paddingTop: "12px",
-                marginBottom: "8px",
-              }}
-            >
-              <div style={sectionDividerStyle}>— Custom Variables —</div>
 
-              {customVarKeys.length > 0 && (
-                <div
-                  style={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "6px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  {customVarKeys.map((key) => (
-                    <div
-                      key={key}
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        backgroundColor: themeColors.primary.color + "18",
-                        border: `1px solid ${themeColors.primary.color}44`,
-                        borderRadius: "4px",
-                        padding: "3px 8px",
-                        fontSize: "11px",
-                        fontFamily: "monospace",
-                        color: themeColors.foreground.color,
-                      }}
-                    >
-                      <span
-                        style={{
-                          color: themeColors.primary.color,
-                          fontWeight: 700,
-                        }}
-                      >
-                        {key}
-                      </span>
-                      <span
-                        style={{ color: themeColors.mutedForeground.color }}
-                      >
-                        :
-                      </span>
-                      <span>
-                        {variables[key] || (
-                          <em style={{ opacity: 0.5 }}>empty</em>
-                        )}
-                      </span>
-                      <button
-                        onClick={() => handleRemoveCustomVar(key)}
-                        disabled={isLoading}
-                        title={`Remove ${key}`}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          cursor: "pointer",
-                          color: "#ef4444",
-                          padding: "0 2px",
-                          lineHeight: 1,
-                          fontSize: "13px",
-                          marginLeft: "2px",
-                        }}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div
-                style={{
-                  display: "flex",
-                  gap: "8px",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
-              >
-                <input
-                  type="text"
-                  placeholder="variable name"
-                  value={customVarName}
-                  onChange={(e) => {
-                    setCustomVarName(e.target.value);
-                    setCustomVarError("");
-                  }}
-                  disabled={isLoading}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleAddCustomVar();
-                  }}
-                  style={{
-                    ...terminalInputStyle,
-                    flex: "0 0 180px",
-                    border: `1px solid ${themeColors.border.color}`,
-                    borderRadius: "4px",
-                    padding: "4px 8px",
-                    backgroundColor: themeColors.background.color,
-                  }}
-                />
-                <span style={{ color: themeColors.mutedForeground.color }}>
-                  =
-                </span>
-                <input
-                  type="text"
-                  placeholder="value"
-                  value={customVarValue}
-                  onChange={(e) => setCustomVarValue(e.target.value)}
-                  disabled={isLoading}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleAddCustomVar();
-                  }}
-                  style={{
-                    ...terminalInputStyle,
-                    flex: "1 1 120px",
-                    border: `1px solid ${themeColors.border.color}`,
-                    borderRadius: "4px",
-                    padding: "4px 8px",
-                    backgroundColor: themeColors.background.color,
-                  }}
-                />
-                <button
-                  onClick={handleAddCustomVar}
-                  disabled={isLoading || !customVarName.trim()}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "5px",
-                    padding: "5px 12px",
-                    backgroundColor:
-                      isLoading || !customVarName.trim()
-                        ? themeColors.muted.color
-                        : themeColors.primary.color,
-                    color: themeColors.primaryForeground.color,
-                    border: "none",
-                    borderRadius: "4px",
-                    fontSize: "11px",
-                    fontFamily: "monospace",
-                    fontWeight: "600",
-                    cursor:
-                      isLoading || !customVarName.trim()
-                        ? "not-allowed"
-                        : "pointer",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  <Plus size={12} />
-                  ADD
-                </button>
-              </div>
-
-              {customVarError && (
-                <div
-                  style={{
-                    color: "#ef4444",
-                    fontSize: "11px",
-                    marginTop: "4px",
-                  }}
-                >
-                  ✗ {customVarError}
-                </div>
-              )}
-            </div>
-          )}
 
           <div
             style={{
@@ -881,6 +681,7 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
           </div>
 
           <div
+            className="terminal-logs-container"
             style={{
               flex: 1,
               backgroundColor: themeColors.background.color,
@@ -888,8 +689,10 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
               padding: "16px",
               overflowY: "auto",
               border: `1px solid ${themeColors.border.color}`,
-              minHeight: "120px",
-              maxHeight: "240px",
+              minHeight: "350px",
+              maxHeight: "500px",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
             }}
           >
             {logs.length === 0 ? (
@@ -930,11 +733,14 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
         </div>
       </div>
 
-      {/* Spinner keyframe */}
+      {/* Spinner keyframe & Hiding Log Scrollbar */}
       <style>{`
         @keyframes spin {
           from { transform: rotate(0deg); }
           to   { transform: rotate(360deg); }
+        }
+        .terminal-logs-container::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </div>

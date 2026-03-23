@@ -14,6 +14,7 @@ import { useEmailTemplate } from "../context/EmailTemplateContext";
 import { useAuth } from "../context/AuthContext";
 import { useThemeStyles } from "../utils/useThemeStyles";
 import TemplatePreviewModal from "../components/TemplatePreviewModal";
+import HtmlPreview from "../components/HtmlPreview";
 
 const TAB_CONFIG = {
   PUBLIC: "public",
@@ -243,16 +244,18 @@ const EmailTemplate = () => {
               </h3>
 
               <div
-                className="flex-1 mb-4 rounded-lg overflow-hidden text-sm"
+                className="flex-1 mb-4 rounded-lg overflow-hidden border transition-all hover:ring-2"
                 style={{
                   backgroundColor: background.color,
-                  border: `1px solid ${border.color}`,
-                  maxHeight: "110px",
+                  borderColor: border.color,
+                  maxHeight: "140px",
+                  height: "140px",
                 }}
               >
-                <div
-                  className="p-3 scale-[0.9] origin-top pointer-events-none"
-                  dangerouslySetInnerHTML={{ __html: template.html }}
+                <HtmlPreview 
+                  html={template.html} 
+                  scale={0.5} 
+                  className="bg-white"
                 />
               </div>
 
@@ -263,7 +266,7 @@ const EmailTemplate = () => {
                     setPreviewMode("template");
                     setIsPreviewOpen(true);
                   }}
-                  className="flex-1 px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition-opacity hover:opacity-90"
+                  className="flex-1 px-4 py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
                   style={{
                     backgroundColor: primary.color,
                     color: primaryForeground.color,

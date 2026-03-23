@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useThemeStyles } from "../utils/useThemeStyles.js";
 import { RotateCcw, CloudCheck, Loader2 } from "lucide-react";
 import { useEmailTemplate } from "../context/EmailTemplateContext";
+import HtmlPreview from "../components/HtmlPreview";
 
 const TEMPLATE_STATUS = {
   ACTIVE: "active",
@@ -425,12 +426,19 @@ const EmailTemplateBuilder = () => {
                         {DYNAMIC_VARIABLES.map((variable) => (
                           <div
                             key={variable.key}
-                            style={{ color: mutedForeground.color }}
+                            className="flex items-center justify-between group cursor-pointer hover:bg-black/5 p-1 rounded transition-colors"
+                            onClick={() => {
+                              navigator.clipboard.writeText(variable.key);
+                              // Could add a toast here if available
+                            }}
+                            title="Click to copy"
                           >
-                            <span style={{ color: primary.color }}>
+                            <span style={{ color: primary.color }} className="font-bold underline decoration-dotted">
                               {variable.key}
                             </span>{" "}
-                            - {variable.description}
+                            <span style={{ color: mutedForeground.color }}>
+                              - {variable.description}
+                            </span>
                           </div>
                         ))}
                       </div>
@@ -595,15 +603,14 @@ const EmailTemplateBuilder = () => {
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          dangerouslySetInnerHTML={{
-                            __html: replaceVariablesInTemplate(htmlContent),
-                          }}
-                          style={{
-                            color: foreground.color,
-                            fontSize: "14px",
-                            lineHeight: "1.6",
-                          }}
-                        />
+                          className="h-[500px] bg-white rounded-lg overflow-hidden border"
+                          style={{ borderColor: border.color }}
+                        >
+                          <HtmlPreview 
+                            html={replaceVariablesInTemplate(htmlContent)} 
+                            pointerEvents="auto"
+                          />
+                        </motion.div>
                       ) : (
                         <motion.div
                           key="preview-placeholder"

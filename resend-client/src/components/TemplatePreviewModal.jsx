@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Copy, Check, Braces } from "lucide-react";
 import { useThemeStyles } from "../utils/useThemeStyles";
+import HtmlPreview from "./HtmlPreview";
 
 const TemplatePreviewModal = ({ isOpen, template, previewMode, onClose }) => {
   const { card, border, foreground, mutedForeground, background, primary } =
@@ -125,13 +126,19 @@ const TemplatePreviewModal = ({ isOpen, template, previewMode, onClose }) => {
             {/* CONTENT SWITCH */}
             {previewMode === "template" && (
               <div
-                className="p-4 rounded-lg text-sm overflow-auto"
+                className="rounded-lg overflow-hidden"
                 style={{
-                  backgroundColor: background.color,
+                  backgroundColor: "white",
                   border: `1px solid ${border.color}`,
+                  height: "500px",
                 }}
-                dangerouslySetInnerHTML={{ __html: template.html }}
-              />
+              >
+                <HtmlPreview 
+                  html={template.html} 
+                  scale={1} 
+                  pointerEvents="auto"
+                />
+              </div>
             )}
 
             {previewMode === "details" && (
