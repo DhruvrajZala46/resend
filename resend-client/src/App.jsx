@@ -16,6 +16,7 @@ import AppCredentials from "./pages/AppCredentials";
 import QuickStart from "./pages/QuickStart";
 import EmailTemplateBuilder from "./pages/EmailTemplateBuilder";
 import EmailTemplate from "./pages/EmailTemplate";
+import Documentations from "./pages/Documentations";
 
 const App = () => {
   const { background, foreground } = useThemeStyles();
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="/verify/:token" element={<VerifyAccount />} />
           <Route path="/quick-start" element={<QuickStart />} />
           <Route path="/email-template" element={<EmailTemplate />} />
+          <Route path="/docs" element={<Documentations />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />

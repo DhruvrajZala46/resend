@@ -10,7 +10,7 @@ import {
   Pie,
   Cell,
   Legend,
-} from "recharts";
+  } from "recharts";
 import {
   Mail,
   CheckCircle2,
