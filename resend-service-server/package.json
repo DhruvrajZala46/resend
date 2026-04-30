@@ -1,5 +1,5 @@
-{
-  "name": "smtp-service",
+﻿{
+  "name": "resend-service-server",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js",
-    "docker:publish": "docker build -t makwanagautam/smtp-service-server:v1 --platform linux/amd64 . && docker push makwanagautam/smtp-service-server:v1"
+    "docker:publish": "docker build -t makwanagautam/resend-service-server-server:v1 --platform linux/amd64 . && docker push makwanagautam/resend-service-server-server:v1"
   },
   "keywords": [],
   "author": "",

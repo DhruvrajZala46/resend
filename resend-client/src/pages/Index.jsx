@@ -70,7 +70,7 @@ const Index = () => {
     border,
   };
 
-  const API_URL = import.meta.env.VITE_SMTP_SERVER_API_BASE_URL || "api.resend.dev";
+  const API_URL = import.meta.env.VITE_SMTP_SERVER_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const duration = 2000;

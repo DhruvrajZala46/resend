@@ -1,5 +1,5 @@
-{
-  "name": "smtp-user-server",
+﻿{
+  "name": "resend-user-server",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",

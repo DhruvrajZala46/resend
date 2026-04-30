@@ -1,8 +1,8 @@
-# SMTP-LITE Client 🎨
+# RESEND Client 🎨
 
 <div align="center">
 
-**Modern React Dashboard for SMTP-LITE Email API Platform**
+**Modern React Dashboard for RESEND Email API Platform**
 
 [![React](https://img.shields.io/badge/React-18.x-blue)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-5.x-purple)](https://vitejs.dev/)
@@ -17,11 +17,20 @@
 
 ## 📖 Overview
 
-**SMTP-LITE Client** is the official dashboard for the SMTP-LITE email API platform. Built with **React 18**, **Vite**, and **Tailwind CSS**, it provides a modern, responsive, and intuitive user interface for managing email sending, API keys, SMTP credentials, and analytics.
+**RESEND Client** is the official dashboard for the RESEND email API platform. Built with **React 18**, **Vite**, and **Tailwind CSS**, it provides a modern, responsive, and intuitive user interface for managing email sending, API keys, SMTP credentials, and analytics.
+
+## ✨ Features
+
+- **Email Management**: Send standard and template-based emails with ease.
+- **Template Builder**: Create and manage professional HTML templates with dynamic variables (e.g., `{{name}}`).
+- **API Key Management**: Securely generate and manage API keys for your applications.
+- **Live Status Tracking**: Real-time email delivery updates (Pending → Sending → Sent) via Server-Sent Events (SSE).
+- **Interactive Documentation**: Comprehensive 5-step Quick Start guide and API documentation with integrated code examples.
+- **Dynamic Themes**: Sleek, modern UI with multiple color themes and glassmorphism effects.
 
 This is a **pure frontend application** with no backend logic. It communicates with two separate backend services:
 - **User Management Server** - Authentication, API keys, app credentials
-- **Email Service Server** - Email sending and status tracking
+- **Email Service Server** - Email processing, template rendering, and status tracking
 
 ---
 
@@ -31,7 +40,7 @@ This is a **pure frontend application** with no backend logic. It communicates w
 
 ```
 ┌─────────────────────────────────────────┐
-│         SMTP-LITE Client (React)        │
+│         RESEND Client (React)        │
 │                                         │
 │  ┌────────────┐      ┌──────────────┐  │
 │  │   Pages    │──────│  Components  │  │
@@ -107,8 +116,8 @@ This is a **pure frontend application** with no backend logic. It communicates w
 **1. Clone the repository:**
 
 ```bash
-git clone https://github.com/makwanagautam41/SMTP-service.git
-cd smtp-service-client
+git clone https://github.com/DhruvrajZala46/resend.git
+cd resend/resend-client
 ```
 
 **2. Install dependencies:**
@@ -190,7 +199,7 @@ We welcome contributions! Here's how:
 
 ## 📄 License
 
-This project is part of the SMTP-LITE commercial SaaS platform.
+This project is part of the RESEND commercial SaaS platform.
 
 ---
 
@@ -206,9 +215,9 @@ This project is part of the SMTP-LITE commercial SaaS platform.
 
 <div align="center">
 
-**Frontend Interface for SMTP-LITE Email API Platform**
+**Frontend Interface for RESEND Email API Platform**
 
-[Main Documentation](../README.md) • [Email Server](../smtp-service-server/README.md) • [User Server](../smtp-user-server/README.md)
+[Main Documentation](../README.md) • [Email Server](../resend-service-server/README.md) • [User Server](../resend-user-server/README.md)
 
 ---
 

@@ -14,6 +14,7 @@ import {
   Radio,
   Lock,
   ChevronDown,
+  FileText,
 } from "lucide-react";
 import { useThemeStyles } from "../utils/useThemeStyles";
 import logo from "../../public/logo.png";
@@ -64,6 +65,11 @@ const Documentations = () => {
     },
     { id: "auth", icon: <Key size={16} />, label: "Authentication" },
     { id: "send", icon: <Send size={16} />, label: "Send Email API" },
+    {
+      id: "template-sending",
+      icon: <FileText size={16} />,
+      label: "Template Sending",
+    },
     { id: "tracking", icon: <Zap size={16} />, label: "Email Tracking API" },
     {
       id: "sse-events",
@@ -209,10 +215,10 @@ const Documentations = () => {
                 className="leading-relaxed mb-3"
                 style={{ color: mutedForeground.color }}
               >
-                RESEND is an worker-driven email API service that provides
-                email sending functionality without much configurations. Our
-                System is totaly worker based that select the latest email and
-                sends that email to customer.
+                RESEND is a worker-driven email API service that provides
+                email sending functionality with minimal configuration. Our
+                system is fully worker-based, selecting the latest emails and
+                delivering them efficiently to recipients.
               </p>
               <div
                 className="p-4 rounded mt-4 transition-colors duration-300"
@@ -232,7 +238,7 @@ const Documentations = () => {
                   className="space-y-1 text-sm list-disc list-inside"
                   style={{ color: mutedForeground.color }}
                 >
-                  <li>Polling required – email status updates</li>
+                  <li>Real-time email status updates</li>
                   <li>Simple REST API with JSON payloads</li>
                   <li>
                     Works with Node.js, Python, PHP, ASP.NET, and browsers
@@ -722,6 +728,195 @@ const Documentations = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </section>
+
+            {/* Template Based Email Sending */}
+            <section
+              id="template-sending"
+              className="rounded-lg shadow p-6 transition-colors duration-300"
+              style={{
+                backgroundColor: card.color,
+                color: foreground.color,
+                border: `1px solid ${border.color}`,
+              }}
+            >
+              <h2
+                className="text-2xl font-bold mb-4 flex items-center gap-2"
+                style={{ color: primary.color }}
+              >
+                <FileText style={{ color: primary.color }} />
+                Template Based Email Sending
+              </h2>
+
+              <p
+                className="leading-relaxed mb-4"
+                style={{ color: mutedForeground.color }}
+              >
+                Create and manage HTML templates in the <strong>Email Template Builder</strong>. 
+                Each template has a unique <strong>Template ID</strong> (UUID) and supports 
+                <strong>dynamic variables</strong> that are replaced at runtime.
+              </p>
+
+              {/* Endpoint Section */}
+              <div className="mb-6">
+                <h3
+                  className="text-lg font-semibold mb-2"
+                  style={{ color: foreground.color }}
+                >
+                  Endpoint
+                </h3>
+                <div
+                  className="p-4 rounded-lg font-mono text-sm"
+                  style={{
+                    backgroundColor: secondary.color,
+                    color: secondaryForeground.color,
+                    border: `1px solid ${border.color}`,
+                  }}
+                >
+                  POST {API_BASE_URL}/api/email/send
+                </div>
+              </div>
+
+              {/* Request Body Table for Template */}
+              <div>
+                <h3
+                  className="text-lg font-semibold mb-2"
+                  style={{ color: foreground.color }}
+                >
+                  Request Body (Template Mode)
+                </h3>
+                <table
+                  className="w-full border-collapse text-sm rounded overflow-hidden"
+                  style={{ border: `1px solid ${border.color}` }}
+                >
+                  <thead>
+                    <tr
+                      style={{
+                        backgroundColor: secondary.color,
+                        color: secondaryForeground.color,
+                      }}
+                    >
+                      <th
+                        className="p-3 text-left"
+                        style={{ border: `1px solid ${border.color}` }}
+                      >
+                        Field
+                      </th>
+                      <th
+                        className="p-3 text-left"
+                        style={{ border: `1px solid ${border.color}` }}
+                      >
+                        Type
+                      </th>
+                      <th
+                        className="p-3 text-left"
+                        style={{ border: `1px solid ${border.color}` }}
+                      >
+                        Required
+                      </th>
+                      <th
+                        className="p-3 text-left"
+                        style={{ border: `1px solid ${border.color}` }}
+                      >
+                        Description
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        field: "to",
+                        type: "string",
+                        required: "Yes",
+                        desc: "Recipient email address",
+                      },
+                      {
+                        field: "templateId",
+                        type: "string (UUID)",
+                        required: "Yes",
+                        desc: "The unique ID of your created template",
+                      },
+                      {
+                        field: "variables",
+                        type: "object",
+                        required: "No",
+                        desc: "Key-value pairs for template placeholders (e.g., {{name}})",
+                      },
+                      {
+                        field: "subject",
+                        type: "string",
+                        required: "No",
+                        desc: "Override the default template subject",
+                      },
+                    ].map((row, index) => (
+                      <tr
+                        key={index}
+                        style={{
+                          backgroundColor: card.color,
+                          color: foreground.color,
+                        }}
+                      >
+                        <td
+                          className="p-3 font-mono"
+                          style={{ border: `1px solid ${border.color}` }}
+                        >
+                          {row.field}
+                        </td>
+                        <td
+                          className="p-3"
+                          style={{ border: `1px solid ${border.color}` }}
+                        >
+                          {row.type}
+                        </td>
+                        <td
+                          className="p-3 font-semibold"
+                          style={{
+                            border: `1px solid ${border.color}`,
+                            color: row.required === "Yes" ? primary.color : mutedForeground.color,
+                          }}
+                        >
+                          {row.required}
+                        </td>
+                        <td
+                          className="p-3"
+                          style={{ border: `1px solid ${border.color}` }}
+                        >
+                          {row.desc}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {/* Example JSON Payload */}
+              <div className="mt-8">
+                <h3
+                  className="text-lg font-semibold mb-3"
+                  style={{ color: foreground.color }}
+                >
+                  Example JSON Payload
+                </h3>
+                <p
+                  className="text-sm mb-4"
+                  style={{ color: mutedForeground.color }}
+                >
+                  This example demonstrates a complete request body using a <strong>templateId</strong> and <strong>dynamic variables</strong>.
+                </p>
+                <CodeBlock
+                  id="template-json-example"
+                  language="json"
+                  code={`{
+  "to": "gmakwana989@rku.ac.in",
+  "subject": "Hello",
+  "templateId": "b4a906a5-5fb8-43e8-9c5d-84025a0d442d",
+  "variables": {
+    "companyName": "RKU",
+    "name": "Gautam"
+  },
+  "html": "Optional: Custom HTML content"
+}`}
+                />
               </div>
             </section>
 

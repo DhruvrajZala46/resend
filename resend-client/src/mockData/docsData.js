@@ -7,6 +7,7 @@ import {
   Key,
   Code,
   AlertCircle,
+  FileText,
 } from "lucide-react";
 
 const API_BASE_URL = import.meta.env.VITE_SMTP_SERVER_API_BASE_URL || "http://localhost:5000";
@@ -29,6 +30,33 @@ curl -X POST "${API_BASE_URL}/api/email/send" \\
 curl -N "${API_BASE_URL}/api/email/events/<EMAIL_ID>?apiKey=YOUR_API_KEY_HERE"
 # -N disables buffering so curl prints events as they arrive.
 `,
+
+  // Template Sending Example
+  template: `# Send email using a template
+curl -X POST "${API_BASE_URL}/api/email/send" \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: YOUR_API_KEY_HERE" \\
+  -d '{
+    "to": "recipient@example.com",
+    "templateId": "YOUR_TEMPLATE_ID_HERE",
+    "variables": {
+      "name": "John Doe",
+      "otp": "123456"
+    }
+  }'
+`,
+
+  // JSON Payload Example
+  templatePayload: `{
+  "to": "gmakwana989@rku.ac.in",
+  "subject": "Hello",
+  "templateId": "b4a906a5-5fb8-43e8-9c5d-84025a0d442d",
+  "variables": {
+    "companyName": "RKU",
+    "name": "Gautam"
+  },
+  "html": "Optional: Custom HTML content"
+}`,
 
   // Node.js (same pattern as your provided example; uses native fetch streaming)
   node: `const API_URL = "${API_BASE_URL}";
@@ -321,7 +349,7 @@ export const documentationSections = [
     title: "Overview",
     icon: HelpCircle,
     description:
-      "RESEND is an email API service that provides delivery tracking via simple API polling or real-time SSE events. You can send emails through the API and check their status using a unique email ID.",
+      "RESEND is a reliable email API service that provides delivery tracking via simple API polling or real-time SSE events. You can send emails through the API and check their status using a unique email ID.",
     content: [
       "Track email delivery status using polling or SSE",
       "Simple REST API with JSON payloads",
@@ -339,6 +367,20 @@ export const documentationSections = [
       "Required headers: Content-Type (application/json) and x-api-key",
       "Request body fields: to (recipient email), subject (email subject), html (email body)",
       "Returns success response with email ID when queued successfully",
+    ],
+  },
+  {
+    id: "template-sending",
+    title: "Template Based Email Sending",
+    icon: FileText,
+    description: `POST ${API_BASE_URL}/api/email/send`,
+    content: [
+      "Create and manage HTML templates in the Email Template Builder",
+      "Each template has a unique Template ID (UUID)",
+      "Dynamic variables like {{name}} or {{otp}} can be used in your templates",
+      "Send email using templateId and variables object in the request body",
+      "Variables provided in the API call will replace the placeholders in the template",
+      "Subject line can be overridden by providing a 'subject' field in the payload",
     ],
   },
   {

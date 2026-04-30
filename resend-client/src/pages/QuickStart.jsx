@@ -11,6 +11,7 @@ import {
   ExternalLink,
   Copy,
   Check,
+  FileText,
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -139,16 +140,42 @@ const QuickStart = () => {
       link: "/docs#sse-events",
       details: [
         "Use the email ID from step 3",
-        "Connect to event route and listen the update",
+        "Connect to the events route to listen for updates",
         "Status: pending → sending → sent/failed",
       ],
-      code: `// just connect to this event stream to see live email status
-const checkStatus = async (emailId) => {
-  const res = await fetch(
-    \`${API_BASE_URL}/api/email/event/\${response._id}\`
-  );
-  return await res.json();
+      code: `// Connect to the event stream for live updates
+const eventSource = new EventSource(
+  \`${API_BASE_URL}/api/email/events/\${emailId}\`
+);
+
+eventSource.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  console.log('Email Status:', data.status);
+  if (data.status === 'sent' || data.status === 'failed') {
+    eventSource.close();
+  }
 };`,
+    },
+    {
+      number: "05",
+      title: "Send with Templates",
+      description: "Use your pre-built HTML templates for professional emails",
+      icon: <FileText size={24} />,
+      action: "Template Builder",
+      link: "/email-template",
+      details: [
+        "Create templates in the Template Builder",
+        "Pass dynamic variables via API",
+        "Consistent branding across all emails",
+      ],
+      code: `{
+  "to": "recipient@example.com",
+  "templateId": "b4a906a5-5fb8-43e8-9c5d-84025a0d442d",
+  "variables": {
+    "name": "Gautam",
+    "companyName": "RKU"
+  }
+}`,
     },
   ];
 
@@ -185,7 +212,7 @@ const checkStatus = async (emailId) => {
               WebkitTextFillColor: "transparent",
             }}
           >
-            4 Simple Steps
+            5 Simple Steps
           </span>
         </h1>
 
