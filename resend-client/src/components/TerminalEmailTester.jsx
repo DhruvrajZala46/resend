@@ -126,7 +126,7 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
     setIsLoading(true);
     clearLogs();
 
-    addLog("Initializing SMTP-LITE connection...", "info");
+    addLog("Initializing RESEND connection...", "info");
     addLog(`Target: ${toEmail}`, "info");
 
     if (!hasTemplate) {
@@ -487,7 +487,7 @@ const TerminalEmailTester = ({ onClose, themeColors }) => {
               <TerminalInput
                 label="SUBJECT"
                 type="text"
-                placeholder="Test Email from SMTP-LITE"
+                placeholder="Test Email from RESEND"
                 disabled={isLoading}
                 themeColors={themeColors}
                 id="term-subject"

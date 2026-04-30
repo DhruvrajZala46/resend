@@ -9,27 +9,29 @@ import {
   AlertCircle,
 } from "lucide-react";
 
+const API_BASE_URL = import.meta.env.VITE_SMTP_SERVER_API_BASE_URL || "http://localhost:5000";
+
 export const examples = {
   // CURL: send email + show how to tail SSE with curl -N
   curl: `# 1) Send email
-curl -X POST "https://smtp-service-server.vercel.app/api/email/send" \\
+curl -X POST "${API_BASE_URL}/api/email/send" \\
   -H "Content-Type: application/json" \\
   -H "x-api-key: YOUR_API_KEY_HERE" \\
   -d '{
     "to":"recipient@example.com",
-    "subject":"Hello from SMTP-LITE (curl)",
-    "html":"<strong>This is a test email sent via SMTP-LITE.</strong>"
+    "subject":"Hello from RESEND (curl)",
+    "html":"<strong>This is a test email sent via RESEND.</strong>"
   }'
 
 # Response includes an \"id\" value. Use that id in the next command.
 
 # 2) Connect to SSE and stream events (replace <EMAIL_ID> and API key)
-curl -N "https://smtp-service-server.vercel.app/api/email/events/<EMAIL_ID>?apiKey=YOUR_API_KEY_HERE"
+curl -N "${API_BASE_URL}/api/email/events/<EMAIL_ID>?apiKey=YOUR_API_KEY_HERE"
 # -N disables buffering so curl prints events as they arrive.
 `,
 
   // Node.js (same pattern as your provided example; uses native fetch streaming)
-  node: `const API_URL = "https://smtp-service-server.vercel.app";
+  node: `const API_URL = "${API_BASE_URL}";
 const API_KEY = "YOUR_API_KEY_HERE";
 
 // 1) Send email
@@ -42,7 +44,7 @@ async function sendEmail() {
     },
     body: JSON.stringify({
       to: "recipient@example.com",
-      subject: "Hello from SMTP-LITE – Node",
+      subject: "Hello from RESEND – Node",
       html: "<strong>Node example</strong>",
     }),
   });
@@ -104,7 +106,7 @@ async function listenForUpdates(emailId) {
   // Browser: use EventSource for automatic SSE handling (recommended)
   browser: `// 1) Send email (fetch)
 async function sendEmail() {
-  const res = await fetch('https://smtp-service-server.vercel.app/api/email/send', {
+  const res = await fetch('${API_BASE_URL}/api/email/send', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -112,7 +114,7 @@ async function sendEmail() {
     },
     body: JSON.stringify({
       to: 'recipient@example.com',
-      subject: 'Hello from SMTP-LITE – Browser',
+      subject: 'Hello from RESEND – Browser',
       html: '<strong>Browser Example</strong>'
     })
   });
@@ -125,7 +127,7 @@ async function sendAndTrackEmail() {
   console.log('📬 Email queued:', data.id);
 
   // if your server accepts API key via query string for EventSource
-  const url = \`https://smtp-service-server.vercel.app/api/email/events/\${data.id}?apiKey=YOUR_API_KEY_HERE\`;
+  const url = \`${API_BASE_URL}/api/email/events/\${data.id}?apiKey=YOUR_API_KEY_HERE\`;
   const es = new EventSource(url);
 
   es.onmessage = (e) => {
@@ -150,7 +152,7 @@ async function sendAndTrackEmail() {
   python: `import requests
 import json
 
-API_URL = 'https://smtp-service-server.vercel.app'
+API_URL = '${API_BASE_URL}'
 API_KEY = 'YOUR_API_KEY_HERE'
 
 # 1) Send email
@@ -158,7 +160,7 @@ resp = requests.post(
     f'{API_URL}/api/email/send',
     json={
         'to': 'recipient@example.com',
-        'subject': 'Hello from SMTP-LITE – Python',
+        'subject': 'Hello from RESEND – Python',
         'html': '<strong>Python example</strong>'
     },
     headers={'Content-Type': 'application/json', 'x-api-key': API_KEY}
@@ -195,12 +197,12 @@ with requests.get(
   // PHP: send via file_get_contents or curl, then use cli cURL to tail SSE (or use PHP stream for SSE)
   php: `<?php
 // 1) Send email using curl
-$apiUrl = 'https://smtp-service-server.vercel.app/api/email/send';
+$apiUrl = '${API_BASE_URL}/api/email/send';
 $apiKey = 'YOUR_API_KEY_HERE';
 
 $payload = json_encode([
   'to' => 'recipient@example.com',
-  'subject' => 'Hello from SMTP-LITE – PHP',
+  'subject' => 'Hello from RESEND – PHP',
   'html' => '<strong>PHP example</strong>'
 ]);
 
@@ -220,11 +222,11 @@ $emailId = $response['id'] ?? $response['_id'] ?? null;
 echo \"Email queued: \" . $emailId . PHP_EOL;
 
 // 2) Simple approach: use CLI curl to stream SSE (run from shell)
-// curl -N \"https://smtp-service-server.vercel.app/api/email/events/{$emailId}\"
+// curl -N \"${API_BASE_URL}/api/email/events/{$emailId}\"
 
 // 3) PHP streaming client (example for CLI PHP)
 if ($emailId) {
-  $sseUrl = \"https://smtp-service-server.vercel.app/api/email/events/{$emailId}";
+  $sseUrl = \"${API_BASE_URL}/api/email/events/{$emailId}";
   $ch = curl_init($sseUrl);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
   curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($ch, $data) {
@@ -247,7 +249,7 @@ using System.Threading.Tasks;
 class Program
 {
     private static readonly HttpClient client = new HttpClient();
-    private const string API_URL = "https://smtp-service-server.vercel.app";
+    private const string API_URL = "${API_BASE_URL}";
     private const string API_KEY = "YOUR_API_KEY_HERE";
 
     static async Task Main()
@@ -265,7 +267,7 @@ class Program
         client.DefaultRequestHeaders.Remove("x-api-key");
         client.DefaultRequestHeaders.Add("x-api-key", API_KEY);
 
-        var payload = new { to = "recipient@example.com", subject = "Hello from SMTP-LITE – C#", html = "<strong>C# example</strong>" };
+        var payload = new { to = "recipient@example.com", subject = "Hello from RESEND – C#", html = "<strong>C# example</strong>" };
         var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 
         var resp = await client.PostAsync(url, content);
@@ -319,7 +321,7 @@ export const documentationSections = [
     title: "Overview",
     icon: HelpCircle,
     description:
-      "SMTP-LITE is an email API service that provides delivery tracking via simple API polling or real-time SSE events. You can send emails through the API and check their status using a unique email ID.",
+      "RESEND is an email API service that provides delivery tracking via simple API polling or real-time SSE events. You can send emails through the API and check their status using a unique email ID.",
     content: [
       "Track email delivery status using polling or SSE",
       "Simple REST API with JSON payloads",
@@ -332,7 +334,7 @@ export const documentationSections = [
     id: "send",
     title: "Send Email API",
     icon: Send,
-    description: "POST https://smtp-service-server.vercel.app/api/email/send",
+    description: `POST ${API_BASE_URL}/api/email/send`,
     content: [
       "Required headers: Content-Type (application/json) and x-api-key",
       "Request body fields: to (recipient email), subject (email subject), html (email body)",
@@ -344,7 +346,7 @@ export const documentationSections = [
     title: "Email Status Tracking (Polling)",
     icon: Zap,
     description:
-      "SMTP-LITE provides a simple endpoint to check email delivery status by polling at intervals (e.g., every 2 seconds).",
+      "RESEND provides a simple endpoint to check email delivery status by polling at intervals (e.g., every 2 seconds).",
     content: [
       "Send an email via /api/email/send and receive a unique email ID",
       "Call /api/email/status/:id to check the current delivery status",

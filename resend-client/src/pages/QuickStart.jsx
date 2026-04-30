@@ -18,6 +18,8 @@ import { useThemeStyles } from "../utils/useThemeStyles";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const API_BASE_URL = import.meta.env.VITE_SMTP_SERVER_API_BASE_URL || "http://localhost:5000";
+
 const QuickStart = () => {
   const navigate = useNavigate();
   const [copiedCode, setCopiedCode] = useState(null);
@@ -119,7 +121,7 @@ const QuickStart = () => {
         "Provide to, subject, and html fields",
         "Receive email ID in response",
       ],
-      code: `curl -X POST https://smtp-service-server.vercel.app/api/email/send \\
+      code: `curl -X POST ${API_BASE_URL}/api/email/send \\
   -H 'Content-Type: application/json' \\
   -H 'x-api-key: YOUR_API_KEY_HERE' \\
   -d '{
@@ -143,7 +145,7 @@ const QuickStart = () => {
       code: `// just connect to this event stream to see live email status
 const checkStatus = async (emailId) => {
   const res = await fetch(
-    \`https://smtp-service-server.vercel.app/api/email/event/\${response._id}\`
+    \`${API_BASE_URL}/api/email/event/\${response._id}\`
   );
   return await res.json();
 };`,
@@ -191,7 +193,7 @@ const checkStatus = async (emailId) => {
           className="text-xl max-w-2xl mx-auto mb-8"
           style={{ color: mutedForeground.color }}
         >
-          Send your first email with SMTP-LITE in under 5 minutes. No complex
+          Send your first email with RESEND in under 5 minutes. No complex
           setup required.
         </p>
 

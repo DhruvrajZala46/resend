@@ -23,6 +23,9 @@ import ScrollSearchOverlay from "../components/ScrollSearchOverlay";
 import CodeBlock from "../components/CodeBlock";
 import { examples, documentationSections } from "../mockData/docsData";
 
+const API_BASE_URL =
+  import.meta.env.VITE_SMTP_SERVER_API_BASE_URL || "http://localhost:5000";
+
 const Documentations = () => {
   const { isSearchOpen, setIsSearchOpen, copiedCode, setCopiedCode } =
     useTheme();
@@ -99,7 +102,7 @@ const Documentations = () => {
             <div className="flex items-center gap-3 mb-2">
               <img
                 src={logo}
-                alt="SMTP-LITE Logo"
+                alt="RESEND Logo"
                 className="w-10 h-10 object-contain"
               />
               <h1 className="text-3xl font-bold">API Documentation</h1>
@@ -206,7 +209,7 @@ const Documentations = () => {
                 className="leading-relaxed mb-3"
                 style={{ color: mutedForeground.color }}
               >
-                SMTP-LITE is an worker-driven email API service that provides
+                RESEND is an worker-driven email API service that provides
                 email sending functionality without much configurations. Our
                 System is totaly worker based that select the latest email and
                 sends that email to customer.
@@ -514,7 +517,7 @@ const Documentations = () => {
                     border: `1px solid ${border.color}`,
                   }}
                 >
-                  POST https://smtp-service-server.vercel.app/api/email/send
+                  POST {API_BASE_URL}/api/email/send
                 </div>
               </div>
 
@@ -756,8 +759,7 @@ const Documentations = () => {
                     border: `1px solid ${border.color}`,
                   }}
                 >
-                  GET
-                  https://smtp-service-server.vercel.app/api/email/status/:id
+                  GET {API_BASE_URL}/api/email/status/:id
                 </div>
                 <p
                   className="text-sm mt-2"
@@ -903,8 +905,7 @@ const Documentations = () => {
                     border: `1px solid ${border.color}`,
                   }}
                 >
-                  GET
-                  https://smtp-service-server.vercel.app/api/email/events/:id
+                  GET {API_BASE_URL}/api/email/events/:id
                 </div>
                 <p
                   className="text-sm mt-2"
@@ -1333,7 +1334,7 @@ data: {"id": "68ff93116cd6d04590c93716","status": "sent", "timestamp": "2025-01-
                   className="font-semibold mb-4"
                   style={{ color: foreground.color }}
                 >
-                  How SMTP-LITE Works
+                  How RESEND Works
                 </h3>
 
                 <div className="space-y-3 text-sm">
