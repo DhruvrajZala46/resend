@@ -23,7 +23,10 @@ const Profile = () => {
         className="flex justify-center items-center min-h-screen"
         style={{ backgroundColor: background.color }}
       >
-        <p className="animate-pulse text-sm font-medium" style={{ color: mutedForeground.color }}>
+        <p
+          className="animate-pulse text-sm font-medium"
+          style={{ color: mutedForeground.color }}
+        >
           Loading profile...
         </p>
       </div>
@@ -39,9 +42,14 @@ const Profile = () => {
       </div>
     );
 
-  const initials = user.name
-    ? user.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
-    : "U";
+  // const initials = user.name
+  //   ? user.name
+  //       .split(" ")
+  //       .map((n) => n[0])
+  //       .join("")
+  //       .toUpperCase()
+  //       .slice(0, 2)
+  //   : "U";
 
   return (
     <div
@@ -56,10 +64,16 @@ const Profile = () => {
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: foreground.color }}>
+          <h1
+            className="text-3xl font-extrabold tracking-tight"
+            style={{ color: foreground.color }}
+          >
             Your Profile
           </h1>
-          <p className="text-sm font-medium mt-1" style={{ color: mutedForeground.color }}>
+          <p
+            className="text-sm font-medium mt-1"
+            style={{ color: mutedForeground.color }}
+          >
             Manage your account information and preferences.
           </p>
         </motion.div>
@@ -70,16 +84,23 @@ const Profile = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="rounded-2xl overflow-hidden mb-5 shadow-sm"
-          style={{ backgroundColor: card.color, border: `1px solid ${border.color}` }}
+          style={{
+            backgroundColor: card.color,
+            border: `1px solid ${border.color}`,
+          }}
         >
           {/* Avatar Banner */}
           <div
             className="relative h-28 flex items-end px-6 pb-0 overflow-hidden"
-            style={{ background: `linear-gradient(135deg, ${primary.color}40, ${primary.color}10)` }}
+            style={{
+              background: `linear-gradient(135deg, ${primary.color}40, ${primary.color}10)`,
+            }}
           >
             <div
               className="absolute inset-0 opacity-20"
-              style={{ backgroundImage: `radial-gradient(circle at 70% 30%, ${primary.color} 0%, transparent 60%)` }}
+              style={{
+                backgroundImage: `radial-gradient(circle at 70% 30%, ${primary.color} 0%, transparent 60%)`,
+              }}
             />
           </div>
 
@@ -87,20 +108,30 @@ const Profile = () => {
           <div className="px-6 pb-6">
             <div className="flex items-end gap-5 -mt-10 mb-5">
               <div
-                className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-extrabold shadow-lg border-4 shrink-0"
+                className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-extrabold shadow-lg border-4 shrink-0"
                 style={{
                   backgroundColor: primary.color,
                   color: primaryForeground.color,
                   borderColor: card.color,
                 }}
               >
-                {initials}
+                <img
+                  src={user.profilePic}
+                  alt="User Profile Image"
+                  className="rounded-full"
+                />
               </div>
               <div className="pb-1">
-                <h2 className="text-xl font-extrabold tracking-tight" style={{ color: foreground.color }}>
+                <h2
+                  className="text-xl font-extrabold tracking-tight"
+                  style={{ color: foreground.color }}
+                >
                   {user.name}
                 </h2>
-                <p className="text-sm font-medium" style={{ color: mutedForeground.color }}>
+                <p
+                  className="text-sm font-medium"
+                  style={{ color: mutedForeground.color }}
+                >
                   {user.email}
                 </p>
               </div>
@@ -110,14 +141,23 @@ const Profile = () => {
             <div className="flex flex-col gap-3">
               <div
                 className="flex items-center gap-3 p-4 rounded-xl"
-                style={{ backgroundColor: background.color, border: `1px solid ${border.color}` }}
+                style={{
+                  backgroundColor: background.color,
+                  border: `1px solid ${border.color}`,
+                }}
               >
                 <User size={18} style={{ color: primary.color }} />
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: mutedForeground.color }}>
+                  <p
+                    className="text-xs font-bold uppercase tracking-widest mb-0.5"
+                    style={{ color: mutedForeground.color }}
+                  >
                     Full Name
                   </p>
-                  <p className="text-sm font-semibold" style={{ color: foreground.color }}>
+                  <p
+                    className="text-sm font-semibold"
+                    style={{ color: foreground.color }}
+                  >
                     {user.name}
                   </p>
                 </div>
@@ -125,14 +165,23 @@ const Profile = () => {
 
               <div
                 className="flex items-center gap-3 p-4 rounded-xl"
-                style={{ backgroundColor: background.color, border: `1px solid ${border.color}` }}
+                style={{
+                  backgroundColor: background.color,
+                  border: `1px solid ${border.color}`,
+                }}
               >
                 <Mail size={18} style={{ color: primary.color }} />
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: mutedForeground.color }}>
+                  <p
+                    className="text-xs font-bold uppercase tracking-widest mb-0.5"
+                    style={{ color: mutedForeground.color }}
+                  >
                     Email Address
                   </p>
-                  <p className="text-sm font-semibold" style={{ color: foreground.color }}>
+                  <p
+                    className="text-sm font-semibold"
+                    style={{ color: foreground.color }}
+                  >
                     {user.email}
                   </p>
                 </div>
@@ -140,14 +189,26 @@ const Profile = () => {
 
               <div
                 className="flex items-center gap-3 p-4 rounded-xl"
-                style={{ backgroundColor: background.color, border: `1px solid ${border.color}` }}
+                style={{
+                  backgroundColor: background.color,
+                  border: `1px solid ${border.color}`,
+                }}
               >
                 <ShieldCheck size={18} style={{ color: "#22c55e" }} />
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: mutedForeground.color }}>
+                  <p
+                    className="text-xs font-bold uppercase tracking-widest mb-0.5"
+                    style={{ color: mutedForeground.color }}
+                  >
                     Account Status
                   </p>
-                  <span className="text-sm font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: "rgba(34,197,94,0.12)", color: "#16a34a" }}>
+                  <span
+                    className="text-sm font-semibold px-2 py-0.5 rounded-full"
+                    style={{
+                      backgroundColor: "rgba(34,197,94,0.12)",
+                      color: "#16a34a",
+                    }}
+                  >
                     Verified & Active
                   </span>
                 </div>
@@ -164,7 +225,7 @@ const Profile = () => {
           className="flex flex-col sm:flex-row gap-3"
         >
           <button
-            onClick={() => window.location.href = "/dashboard"}
+            onClick={() => (window.location.href = "/dashboard")}
             className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98]"
             style={{
               backgroundColor: primary.color,

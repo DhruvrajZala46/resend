@@ -38,6 +38,6 @@ app.use(`${API_PREFIX}/email`, emailEventsRoutes);
   getWorker();
 
   app.listen(PORT, () => {
-    info(`API server listening on port ${PORT}`);
+    info(`Email API server listening on port ${PORT}`);
   });
 })();
